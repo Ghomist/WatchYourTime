@@ -1,10 +1,10 @@
 #pragma once
 
 #include <BML/BMLAll.h>
-#include <format>
+// #include <format>
 #include <fstream>
 
-#define MOD_VERSION "1" "." "3"
+#define MOD_VERSION "1" "." "4"
 
 extern "C" {
 	__declspec(dllexport) IMod* BMLEntry(IBML* bml);
@@ -20,8 +20,11 @@ public:
 	virtual CKSTRING GetAuthor() override { return "Ghomist"; }
 	virtual CKSTRING GetDescription() override;
 	DECLARE_BML_VERSION;
+	virtual void OnExitGame();
 	virtual void OnLoad();
+	void OnLoadObject(CKSTRING filename, BOOL isMap, CKSTRING masterName, CK_CLASSID filterClass, BOOL addtoscene, BOOL reuseMeshes, BOOL reuseMaterials, BOOL dynamic, XObjectArray* objArray, CKObject* masterObj) override;
 	virtual void OnStartLevel();
+	virtual void OnPostLoadLevel();
 	virtual void OnPostExitLevel();
 	virtual void OnPostNextLevel();
 	//virtual void OnProcess();
@@ -36,5 +39,6 @@ private:
 	int GetLevel();
 
 	std::string desc = "";
+	bool is_bml_custom_map = false;
 	//char c_desc[512] = "";
 };
