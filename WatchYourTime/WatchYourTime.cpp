@@ -42,8 +42,12 @@ void getTime(time_t times[], size_t counts[]) {
 	in.close();
 }
 
+bool data_saved = false;
+
 void saveIngameTime() {
+	if (data_saved) return;
 	addTime(0, time(0) - game_start, true);
+	data_saved = true;
 }
 
 IMod* BMLEntry(IBML* bml) {
@@ -56,13 +60,15 @@ void WatchYourTime::OnExitGame() {
 
 void WatchYourTime::OnLoad() {
 	game_start = time(0);
-	// atexit(saveIngameTime);
+	atexit(saveIngameTime);
+	at_quick_exit(saveIngameTime);
 }
 
 void WatchYourTime::OnLoadObject(CKSTRING filename, BOOL isMap, CKSTRING masterName, CK_CLASSID filterClass, BOOL addtoscene, BOOL reuseMeshes, BOOL reuseMaterials, BOOL dynamic, XObjectArray* objArray, CKObject* masterObj) {
 	if (isMap) {
 		current_level = GetLevel();
 		is_bml_custom_map = ('3' != filename[0]);
+		// 3D Entities\\Level
 	}
 }
 
@@ -99,7 +105,7 @@ CKSTRING WatchYourTime::GetDescription() {
 	h = ToHour(times[0]);
 	m = ToMin(times[0]);
 	s = ToSecond(times[0]);
-	FormatTime(buf, "In game total", h, m, s);
+	FormatTime(buf, "In game", h, m, s);
 	desc += buf;
 	desc += ", " + std::to_string(counts[0]) + " time" + (counts[0] == 1 ? "" : "s") + "\n";
 
